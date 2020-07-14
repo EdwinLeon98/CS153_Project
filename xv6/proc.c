@@ -6,6 +6,7 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
+#include "stdlib.h"
 
 struct {
   struct spinlock lock;
@@ -295,7 +296,7 @@ wait(int* status)
         p->name[0] = 0;
         p->killed = 0;
         p->state = UNUSED;
-	if(status) {
+	if(status != NULL) {
 		*status = p->status;
 	}
 	else {
@@ -343,7 +344,7 @@ waitpid(int pid, int* status, int options)
         p->name[0] = 0;
         p->killed = 0;
         p->state = UNUSED;
-	if(status) {
+	if(status != NULL) {
 		*status = p->status;
 	}
 	else {

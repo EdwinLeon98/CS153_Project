@@ -15,13 +15,13 @@ int main(int argc, char *argv[]){
 	for(int i = 0; i < 2; ++i) {
 		pid = fork();
 		if(pid == 0) {
-			printf(stdout, "This process is a child.\n");
+			printf(1, "This process is a child.\n");
 			exit(0);
 		} else if(pid > 0) {
 			pid2 = wait(&status);
-			printf(stdout, "This process is a parent.\n");
+			printf(1, "This process is a parent.\n");
 		} else {
-			printf(stdout, "Error.\n");
+			printf(1, "Error.\n");
 		}
 	}
 	return 0;
