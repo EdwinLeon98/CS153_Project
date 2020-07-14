@@ -413,7 +413,7 @@ exitwait(void)
       return;
     }
     if(pid){
-      if(wait() != pid){
+      if(wait(0) != pid){
         printf(1, "wait wrong pid\n");
         return;
       }
@@ -552,7 +552,7 @@ fourfiles(void)
   }
 
   for(pi = 0; pi < 4; pi++){
-    wait();
+    wait(0);
   }
 
   for(i = 0; i < 2; i++){
