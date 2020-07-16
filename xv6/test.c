@@ -2,12 +2,14 @@
 #include "user.h"
 
 int exitWait(void);
+int waitpidTest(void);
 
 int main(int argc, char *argv[])
 {
   	printf(1, "\n This program tests the correctness of the new wait and exit systemcalls\n");
-  
 	exitWait();
+	printf(1, "\n This program tests the correctness of waitpid ststemcall\n");
+	waitpidTest();
 	exit(0);
 	return 0;
 }
@@ -41,4 +43,24 @@ int exitWait(void) {
                 }
 	}
         return 0;
+}
+
+int waitpidTest(void){
+	int exit_status;
+	int ret_pid;
+	int pid[5];
+	int i;
+	for(i = 0; i < 5; i++){
+		if((pid[i] = fork()) == 0){
+			printf(1, "\n This is the child with PID# %d and I will exit with status %d\n", getpid(), i);
+			printf(1, "\n");
+			exit(i);
+		}
+	}
+	for(i = 0; i < 5; i++){
+		sleep(5);
+         	ret_pid = waitpid(pid[i], &exit_status, 0);
+     		printf(1, "\n This is the parent: child with PID# %d has exit status %d\n", ret_pid, exit_status);
+        }	
+	return 0;
 }
