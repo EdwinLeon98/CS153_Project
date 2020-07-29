@@ -51,6 +51,22 @@ sys_waitpid(void)
 }
 
 int
+sys_getPrio(void)
+{
+   return getPrio();
+}
+
+int 
+sys_setPrio(void)
+{
+   int prio;
+
+   if(argint(0, &prio) < 0)
+     return -1;
+   return setPrio(prio);
+}
+
+int
 sys_kill(void)
 {
   int pid;

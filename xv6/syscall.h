@@ -21,3 +21,5 @@
 #define SYS_mkdir  20
 #define SYS_close  21
 #define SYS_waitpid 22
+#define SYS_getPrio 23
+#define SYS_setPrio 24
