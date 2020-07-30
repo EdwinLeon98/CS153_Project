@@ -69,7 +69,7 @@ int waitpidTest(void){
 int schedulerTest(void){
 	int pid, ret_pid, exit_status;
 	int i, j;
-	//int timer = 0;
+	int timer = 0;
 	
 	printf(1,"\nTesting the scheduler\n");
 		
@@ -78,9 +78,9 @@ int schedulerTest(void){
 		if(pid == 0){
 			setPrio(15-(5*i));
 			printf(1,"\n This is child with PID: %d and priority %d\n", getpid(), getPrio());
-			for(j = 0; j < 25; j++){
-				//timer += timer;
-				printf(1,"\n This is child with PID: %d and priority %d\n", getpid(), getPrio());		
+			for(j = 0; j < 20; j++){
+				timer += timer;
+			//	printf(1,"\n This is child with PID: %d and priority %d\n", getpid(), getPrio());		
 			}
 			printf(1,"\n This child with PID: %d exited with priority %d\n", getpid(), getPrio()); 	
 			exit(0);		
