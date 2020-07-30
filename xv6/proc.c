@@ -373,9 +373,13 @@ int getPrio(void)
 
 int setPrio(int prio)
 {
-  myproc()->priority = prio;
-  yield();
-  return 0;
+  if((prio <= 15) && (prio >= 0)){	
+  	myproc()->priority = prio;
+  	yield(); //When priority changes it yields the CPU
+  	return 0;
+  }
+  else
+	return -1; 
 }
 
 //PAGEBREAK: 42
@@ -393,8 +397,8 @@ scheduler(void)
 {
   struct proc *p;
   struct cpu *c = mycpu();
-  struct proc *curproc; //Current process/Highes priority process
-  struct proc *p2; //Temporary process used to determine which process has higher priority
+  struct proc *p2;
+  struct proc *curproc;
   c->proc = 0;
   
   for(;;){
@@ -405,43 +409,44 @@ scheduler(void)
     acquire(&ptable.lock);
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE){
-        p->priority--; //If process does not run we increase its priority
-        continue;
+	continue;
       }
       
-      if(p->priority < 15){ //Priority ranges from 0-15
-	p->priority++; //If it runs the we decrease its priority
-      }
+      curproc = p;
       
-      curproc = p; //The current process is the highest priority process
+//      if(p->priority < 15){
+//        p->priority++;
+//      }
 
-      //Check if there is a process with higher priority
-      for(p2 = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      // Loop over process table looking for highest priority process to run
+      for(p2 = ptable.proc; p2 < &ptable.proc[NPROC]; p2++){
 	if(p2->state != RUNNABLE){
+	  p2->priority--;
 	  continue;
 	}
-	
-	//If p2 has a higher priority than the current process then we set p2 as the new current process
-	if(p2->priority < curproc->priority){
-	  curproc = p2; 
+        if(p2->priority < curproc->priority){
+	  curproc = p2;
 	}
       }
+    
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
-      // before jumping back to us.
+      // before jumping back to us.     
       c->proc = curproc;
       switchuvm(curproc);
       curproc->state = RUNNING;
-
+      
       swtch(&(c->scheduler), curproc->context);
       switchkvm();
-
+      
+      if(p->priority < 15){
+        p->priority++;
+      }      
       // Process is done running for now.
       // It should have changed its p->state before coming back.
       c->proc = 0;
     }
     release(&ptable.lock);
-
   }
 }
 

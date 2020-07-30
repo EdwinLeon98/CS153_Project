@@ -3,13 +3,15 @@
 
 int exitWait(void);
 int waitpidTest(void);
+int schedulerTest(void);
 
 int main(int argc, char *argv[])
 {
-  	printf(1, "\n This program tests the correctness of the new wait and exit systemcalls\n");
-	exitWait();
-	printf(1, "\n This program tests the correctness of waitpid ststemcall\n");
-	waitpidTest();
+//  	printf(1, "\n This program tests the correctness of the new wait and exit systemcalls\n");
+//	exitWait();
+//	printf(1, "\n This program tests the correctness of waitpid ststemcall\n");
+//	waitpidTest();
+	schedulerTest();
 	exit(0);
 	return 0;
 }
@@ -54,7 +56,6 @@ int waitpidTest(void){
 		if((pid[i] = fork()) == 0){
 			printf(1, "\n This is the child with PID# %d and I will exit with status %d\n", getpid(), i);
 			printf(1, "\n");
-			exit(i);
 		}
 	}
 	for(i = 0; i < 5; i++){
@@ -64,3 +65,34 @@ int waitpidTest(void){
         }	
 	return 0;
 }
+
+int schedulerTest(void){
+	int pid, ret_pid, exit_status;
+	int i, j;
+	//int timer = 0;
+	
+	printf(1,"\nTesting the scheduler\n");
+		
+	for(i = 0; i < 3; i++){
+		pid = fork();
+		if(pid == 0){
+			setPrio(15-(5*i));
+			printf(1,"\n This is child with PID: %d and priority %d\n", getpid(), getPrio());
+			for(j = 0; j < 25; j++){
+				//timer += timer;
+				printf(1,"\n This is child with PID: %d and priority %d\n", getpid(), getPrio());		
+			}
+			printf(1,"\n This child with PID: %d exited with priority %d\n", getpid(), getPrio()); 	
+			exit(0);		
+		}		
+		else if(pid > 0){
+			ret_pid = wait(&exit_status);
+                        printf(1, "\n This is the parent: child with PID# %d has exited with status %d\n", ret_pid, exit_status);
+		}
+		else{
+			printf(2, "\nError using fork\n");
+			exit(-1);
+		}
+	}
+	return 0;
+}        
