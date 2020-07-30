@@ -366,6 +366,18 @@ waitpid(int pid, int* status, int options)
   }
 }
 
+int getPrio(void)
+{
+  return myproc()->priority;
+}
+
+int setPrio(int prio)
+{
+  myproc()->priority = prio;
+  yield();
+  return 0;
+}
+
 //PAGEBREAK: 42
 // Per-CPU process scheduler.
 // Each CPU calls scheduler() after setting itself up.
@@ -374,11 +386,15 @@ waitpid(int pid, int* status, int options)
 //  - swtch to start running that process
 //  - eventually that process transfers control
 //      via swtch back to the scheduler.
+
+//New scheduler
 void
 scheduler(void)
 {
   struct proc *p;
   struct cpu *c = mycpu();
+  struct proc *curproc; //Current process/Highes priority process
+  struct proc *p2; //Temporary process used to determine which process has higher priority
   c->proc = 0;
   
   for(;;){
@@ -388,17 +404,36 @@ scheduler(void)
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->state != RUNNABLE)
+      if(p->state != RUNNABLE){
+        p->priority--; //If process does not run we increase its priority
         continue;
+      }
+      
+      if(p->priority < 15){ //Priority ranges from 0-15
+	p->priority++; //If it runs the we decrease its priority
+      }
+      
+      curproc = p; //The current process is the highest priority process
 
+      //Check if there is a process with higher priority
+      for(p2 = ptable.proc; p < &ptable.proc[NPROC]; p++){
+	if(p2->state != RUNNABLE){
+	  continue;
+	}
+	
+	//If p2 has a higher priority than the current process then we set p2 as the new current process
+	if(p2->priority < curproc->priority){
+	  curproc = p2; 
+	}
+      }
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
-      c->proc = p;
-      switchuvm(p);
-      p->state = RUNNING;
+      c->proc = curproc;
+      switchuvm(curproc);
+      curproc->state = RUNNING;
 
-      swtch(&(c->scheduler), p->context);
+      swtch(&(c->scheduler), curproc->context);
       switchkvm();
 
       // Process is done running for now.
