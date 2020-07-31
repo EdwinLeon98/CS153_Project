@@ -11,6 +11,7 @@ int main(int argc, char *argv[])
 //	exitWait();
 //	printf(1, "\n This program tests the correctness of waitpid ststemcall\n");
 //	waitpidTest();
+	printf(1, "\n This program tests the correctness of aging of priority scheduler\n");
 	schedulerTest();
 	exit(0);
 	return 0;
@@ -68,26 +69,28 @@ int waitpidTest(void){
 
 int schedulerTest(void){
 	int pid, ret_pid, exit_status;
-	int i, j;
-	int timer = 0;
+	int i, j, k;
+	int count = 0;
+	
 	
 	printf(1,"\nTesting the scheduler\n");
 		
-	for(i = 0; i < 3; i++){
+	for(i = 0; i < 5; i++){
 		pid = fork();
 		if(pid == 0){
-			setPrio(15-(5*i));
+			setPrio(50-(10*i));
 			printf(1,"\n This is child with PID: %d and priority %d\n", getpid(), getPrio());
-			for(j = 0; j < 20; j++){
-				timer += timer;
-			//	printf(1,"\n This is child with PID: %d and priority %d\n", getpid(), getPrio());		
-			}
+			for(j = 0; j < 1000; j++){
+				for(k = 0; k < 1000; k ++){
+					count++;
+				}
+			}	
 			printf(1,"\n This child with PID: %d exited with priority %d\n", getpid(), getPrio()); 	
 			exit(0);		
 		}		
 		else if(pid > 0){
 			ret_pid = wait(&exit_status);
-                        printf(1, "\n This is the parent: child with PID# %d has exited with status %d\n", ret_pid, exit_status);
+                        printf(1, "\n This is the parent: child with PID# %d has exited\n", ret_pid);
 		}
 		else{
 			printf(2, "\nError using fork\n");

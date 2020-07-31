@@ -368,21 +368,21 @@ waitpid(int pid, int* status, int options)
 
 int getPrio(void)
 {
-  struct proc *p = myproc();
-  return p->priority;
+  struct proc *curproc = myproc();
+  return curproc->priority;
 }
 
 int setPrio(int prio)
 {
   struct proc *p = myproc();
 
-  if((prio <= 15) && (prio >= 0)){	
-  	p->priority = prio;
-  //	yield(); //When priority changes it yields the CPU
-  	return 0;
+  if((prio < 0) || (prio > 50)){	
+  	return -1;
   }
-  else
-	return -1; 
+  else{
+	p->priority = prio;
+	return 0;
+  } 
 }
 
 //PAGEBREAK: 42
@@ -400,8 +400,8 @@ scheduler(void)
 {
   struct proc *p;
   struct cpu *c = mycpu();
-  struct proc *p2;
-  struct proc *curproc;
+  struct proc *p2; //Temp process to determine which process had the highest priority
+  struct proc *p3; //Highest priority process
   c->proc = 0;
   
   for(;;){
@@ -412,38 +412,38 @@ scheduler(void)
     acquire(&ptable.lock);
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE){
+	if(p->priority > 0){ //If process does not run then increase its priority
+                p->priority--;
+        }
 	continue;
       }
       
-      curproc = p; //Assign curproc the first runnable process
-      
-      //If the priority of the is less than 15 we decrease its priority
-      if(p->priority < 15){
-        p->priority++;
-      }
+      p3 = p; //Assign curproc the first runnable process
 
       // Loop over process table looking for highest priority process to run
       for(p2 = ptable.proc; p2 < &ptable.proc[NPROC]; p2++){
 	if(p2->state != RUNNABLE){
-	  if(p2->priority > 0){ //If process does not run then increase its priority
-		p2->priority--;
-	  }
 	  continue;
 	}
 	//If the priority of p2 is higher than the priority of curproc then assign it to curproc
-        if(p2->priority < curproc->priority){
-	  curproc = p2;
+        if(p2->priority < p3->priority){
+	  p3 = p2;
 	}
       }
     
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.     
-      c->proc = curproc;
-      switchuvm(curproc);
-      curproc->state = RUNNING;
-      
-      swtch(&(c->scheduler), curproc->context);
+      c->proc = p3;
+      switchuvm(p3);
+      p3->state = RUNNING;
+
+      //If the priority of the is less than 50 we decrease its priority
+      if(p->priority < 50){
+        p->priority++;
+      }
+ 
+      swtch(&(c->scheduler), p3->context);
       switchkvm();
       // Process is done running for now.
       // It should have changed its p->state before coming back.
