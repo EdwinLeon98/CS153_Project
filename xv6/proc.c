@@ -418,14 +418,14 @@ scheduler(void)
 	continue;
       }
       
-      p3 = p; //Assign curproc the first runnable process
+      p3 = p; //Assign p3 the first runnable process
 
       // Loop over process table looking for highest priority process to run
       for(p2 = ptable.proc; p2 < &ptable.proc[NPROC]; p2++){
 	if(p2->state != RUNNABLE){
 	  continue;
 	}
-	//If the priority of p2 is higher than the priority of curproc then assign it to curproc
+	//If the priority of p2 is higher than the priority of p3 then assign it to p3
         if(p2->priority < p3->priority){
 	  p3 = p2;
 	}
