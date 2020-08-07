@@ -381,6 +381,7 @@ int setPrio(int prio)
   }
   else{
 	p->priority = prio;
+	yield();
 	return 0;
   } 
 }
