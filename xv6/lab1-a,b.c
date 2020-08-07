@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
   printf(1, "\n This program tests the correctness of the new wait and exit systemcalls\n");
   
 	exitWait();
-	exitS(0);
+	exit(0);
 	return 0;
  }
   
@@ -25,12 +25,12 @@ int exitWait(void) {
       if (i == 0)
       {
       printf(1, "\nThis is child with PID# %d and I will exit with status %d\n", getpid(), 0);
-      exitS(0);
+      exit(0);
       }
       else
       {
 	    printf(1, "\nThis is child with PID# %d and I will exit with status %d\n" ,getpid(), -1);
-      exitS(-1);
+      exit(-1);
       } 
     }else if (pid > 0) { // only the parent executes this code
       ret_pid = wait(&exit_status);
@@ -38,7 +38,7 @@ int exitWait(void) {
     } else{  // something went wrong with fork system call
       
 	  printf(2, "\nError using fork\n");
-    exitS(-1);
+    exit(-1);
     }
   }
   return 0;
