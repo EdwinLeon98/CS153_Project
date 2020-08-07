@@ -9,10 +9,10 @@ int main(int argc, char *argv[])
 {
 //  	printf(1, "\n This program tests the correctness of the new wait and exit systemcalls\n");
 //	exitWait();
-//	printf(1, "\n This program tests the correctness of waitpid ststemcall\n");
-//	waitpidTest();
-	printf(1, "\n This program tests the correctness of aging of priority scheduler\n");
-	schedulerTest();
+	printf(1, "\n This program tests the correctness of waitpid ststemcall\n");
+	waitpidTest();
+//	printf(1, "\n This program tests the correctness of aging of priority scheduler\n");
+//	schedulerTest();
 	exit(0);
 	return 0;
 }
@@ -57,6 +57,7 @@ int waitpidTest(void){
 		if((pid[i] = fork()) == 0){
 			printf(1, "\n This is the child with PID# %d and I will exit with status %d\n", getpid(), i);
 			printf(1, "\n");
+			exit(i);
 		}
 	}
 	for(i = 0; i < 5; i++){

@@ -376,7 +376,7 @@ int setPrio(int prio)
 {
   struct proc *p = myproc();
 
-  if((prio < 0) || (prio > 50)){	
+  if((prio < 0) || (prio > 30)){	
   	return -1;
   }
   else{
@@ -440,7 +440,7 @@ scheduler(void)
       p3->state = RUNNING;
 
       //If the priority of the is less than 50 we decrease its priority
-      if(p->priority < 50){
+      if(p->priority < 30){
         p->priority++;
       }
  
