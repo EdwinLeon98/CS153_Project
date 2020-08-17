@@ -335,6 +335,7 @@ copyuvm(pde_t *pgdir, uint sz)
     if(mappages(d, (void*)i, PGSIZE, V2P(mem), flags) < 0)
       goto bad;
   }
+  //for(i = 0; i < 
   return d;
 
 bad:
