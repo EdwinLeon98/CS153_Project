@@ -43,11 +43,12 @@ fetchstr(uint addr, char **pp)
   	s++;
   }
   return s - *pp;
+	
   //for(s = *pp; s < ep; s++){
   //  if(*s == 0)
   //    return s - *pp;
   //}
- // return -1;
+  //return -1;
 }
 
 // Fetch the nth 32-bit system call argument.
