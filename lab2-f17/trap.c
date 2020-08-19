@@ -77,7 +77,21 @@ trap(struct trapframe *tf)
             cpuid(), tf->cs, tf->eip);
     lapiceoi();
     break;
-
+  case T_PGFLT:
+    //get offending address
+    uint addr = rcr2();
+    //check if it is from the page right under the current bottom of the stack
+    if(addr < (STACK - (myproc()->pages * PGSIZE)){
+      if(allocuvm(myproc()->pgdir, STACK, PGROUNDUP(STACK)) == 0){
+	cprintf("Failed to allocate page\n");
+	exit();
+      }
+      else{
+	myproc()->pages++;
+	cprintf("Succesfully allocated page\n");
+      }
+    }
+    break;
   //PAGEBREAK: 13
   default:
     if(myproc() == 0 || (tf->cs&3) == 0){

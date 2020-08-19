@@ -16044,11 +16044,9 @@ copyuvm(pde_t *pgdir, uint sz, int pages)
 80108062:	3b 45 0c             	cmp    0xc(%ebp),%eax
 80108065:	0f 82 23 ff ff ff    	jb     80107f8e <copyuvm+0x2a>
   }
-  //uint y = (STACK - sz)/pages;
  for(i = 0; i < pages; i++){
 8010806b:	c7 45 f4 00 00 00 00 	movl   $0x0,-0xc(%ebp)
 80108072:	e9 dd 00 00 00       	jmp    80108154 <copyuvm+0x1f0>
-// Address ranges to iterrate over
    uint x = STACK - (PGSIZE * (i + 1)); 
 80108077:	8b 45 f4             	mov    -0xc(%ebp),%eax
 8010807a:	83 c0 01             	add    $0x1,%eax
@@ -16128,7 +16126,6 @@ copyuvm(pde_t *pgdir, uint sz, int pages)
 80108154:	8b 45 10             	mov    0x10(%ebp),%eax
 80108157:	3b 45 f4             	cmp    -0xc(%ebp),%eax
 8010815a:	0f 87 17 ff ff ff    	ja     80108077 <copyuvm+0x113>
-   // y += y;
   } 
   return d;
 80108160:	8b 45 f0             	mov    -0x10(%ebp),%eax
